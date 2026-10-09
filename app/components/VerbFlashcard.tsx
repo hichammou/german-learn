@@ -63,10 +63,9 @@ export function VerbFlashcard({
 
   return (
     <div
-      className={`group relative w-full perspective-1200 cursor-pointer select-none ${
+      className={`group relative w-full perspective-1200 select-none ${
         size === 'large' ? 'h-[500px] max-w-xl mx-auto' : 'h-[420px]'
       }`}
-      onClick={handleFlip}
     >
       {/* 3D Inner Container */}
       <div
@@ -75,7 +74,12 @@ export function VerbFlashcard({
         }`}
       >
         {/* ================= FRONT SIDE ================= */}
-        <div className="absolute inset-0 w-full h-full backface-hidden rounded-3xl border border-slate-700/60 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 p-6 flex flex-col justify-between shadow-xl shadow-slate-950/60 hover:border-slate-500/80 transition-all hover:shadow-indigo-500/10">
+        <div
+          onClick={handleFlip}
+          className={`absolute inset-0 w-full h-full backface-hidden rounded-3xl border border-slate-700/60 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 p-6 flex flex-col justify-between shadow-xl shadow-slate-950/60 hover:border-slate-500/80 transition-all hover:shadow-indigo-500/10 cursor-pointer ${
+            isFlipped ? 'pointer-events-none opacity-0 invisible' : 'pointer-events-auto opacity-100 visible'
+          }`}
+        >
           {/* Ambient Glow */}
           <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -177,7 +181,11 @@ export function VerbFlashcard({
         </div>
 
         {/* ================= BACK SIDE ================= */}
-        <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-3xl border border-indigo-500/40 bg-gradient-to-br from-slate-900 via-slate-850 to-indigo-950/40 p-5 md:p-6 flex flex-col justify-between shadow-2xl shadow-indigo-950/40 overflow-y-auto">
+        <div
+          className={`absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-3xl border border-indigo-500/40 bg-gradient-to-br from-slate-900 via-slate-850 to-indigo-950/40 p-5 md:p-6 flex flex-col justify-between shadow-2xl shadow-indigo-950/40 ${
+            isFlipped ? 'pointer-events-auto opacity-100 visible' : 'pointer-events-none opacity-0 invisible'
+          }`}
+        >
           {/* Header on Back */}
           <div className="flex items-start justify-between border-b border-slate-800/80 pb-3">
             <div>
@@ -192,7 +200,7 @@ export function VerbFlashcard({
               </p>
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <button
                 type="button"
                 onClick={(e) => handleAudio(e, `${verb.infinitive}. ${verb.auxiliaryVerb === 'sein' ? 'ist' : 'hat'} ${verb.partizipII}`)}
@@ -208,11 +216,12 @@ export function VerbFlashcard({
                   e.stopPropagation();
                   handleFlip();
                 }}
-                className="p-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 transition-colors border border-indigo-500/30"
-                title="Flip back"
+                className="px-2 py-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 transition-colors border border-indigo-500/30 text-xs font-medium flex items-center gap-1"
+                title="Flip back to front"
                 aria-label="Flip back"
               >
-                <RotateCw className="w-4 h-4" />
+                <RotateCw className="w-3.5 h-3.5" />
+                <span>Front</span>
               </button>
             </div>
           </div>
@@ -254,7 +263,7 @@ export function VerbFlashcard({
           <div className="my-2">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[10px] uppercase font-semibold tracking-wider text-slate-400 flex items-center gap-1">
-                <BookOpen className="w-3 h-3 text-indigo-400" />
+                <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
                 Conjugation (Präsens)
               </span>
               {verb.category === 'irregular' && (
@@ -297,7 +306,7 @@ export function VerbFlashcard({
           {/* Object Case Bar */}
           <div className="my-1.5 px-3 py-2 rounded-xl bg-slate-850/80 border border-slate-700/60 flex items-center justify-between">
             <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider flex items-center gap-1">
-              <Layers className="w-3 h-3 text-indigo-400" /> Object Case:
+              <Layers className="w-3.5 h-3.5 text-indigo-400" /> Object Case:
             </span>
             <div className="flex items-center gap-1.5 flex-wrap">
               {verb.objectCases.length > 0 ? (
@@ -330,14 +339,14 @@ export function VerbFlashcard({
                   e.stopPropagation();
                   onToggleLearning(verb.id);
                 }}
-                className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-medium transition-colors border flex items-center justify-center gap-1.5 ${
+                className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition-all border flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer ${
                   isLearning && !isMastered
-                    ? 'bg-amber-500/25 text-amber-300 border-amber-500/50'
-                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 border-slate-700'
+                    ? 'bg-amber-500/30 text-amber-200 border-amber-400 ring-1 ring-amber-400/50'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border-slate-700'
                 }`}
               >
                 <Clock className="w-3.5 h-3.5" />
-                Still Learning
+                {isLearning && !isMastered ? 'In Progress' : 'Still Learning'}
               </button>
             )}
 
@@ -348,14 +357,14 @@ export function VerbFlashcard({
                   e.stopPropagation();
                   onToggleMastered(verb.id);
                 }}
-                className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-medium transition-colors border flex items-center justify-center gap-1.5 ${
+                className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition-all border flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer ${
                   isMastered
-                    ? 'bg-emerald-500/25 text-emerald-300 border-emerald-500/50'
-                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700/80 border-slate-700'
+                    ? 'bg-emerald-500/30 text-emerald-200 border-emerald-400 ring-1 ring-emerald-400/50'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border-slate-700'
                 }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                Mastered
+                {isMastered ? 'Mastered' : 'Mark Mastered'}
               </button>
             )}
           </div>

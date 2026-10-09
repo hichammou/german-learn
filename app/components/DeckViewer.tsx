@@ -170,16 +170,19 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
         next.delete(id);
       } else {
         next.add(id);
-        // remove from learning if mastered
-        setLearningIds((lPrev) => {
-          const lNext = new Set(lPrev);
-          lNext.delete(id);
-          saveState('german_learning_ids', lNext);
-          return lNext;
-        });
       }
       saveState('german_mastered_ids', next);
       return next;
+    });
+
+    setLearningIds((prev) => {
+      if (prev.has(id)) {
+        const next = new Set(prev);
+        next.delete(id);
+        saveState('german_learning_ids', next);
+        return next;
+      }
+      return prev;
     });
   }, []);
 
@@ -190,16 +193,19 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
         next.delete(id);
       } else {
         next.add(id);
-        // remove from mastered if set to learning
-        setMasteredIds((mPrev) => {
-          const mNext = new Set(mPrev);
-          mNext.delete(id);
-          saveState('german_mastered_ids', mNext);
-          return mNext;
-        });
       }
       saveState('german_learning_ids', next);
       return next;
+    });
+
+    setMasteredIds((prev) => {
+      if (prev.has(id)) {
+        const next = new Set(prev);
+        next.delete(id);
+        saveState('german_mastered_ids', next);
+        return next;
+      }
+      return prev;
     });
   }, []);
 
@@ -464,7 +470,7 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
                 key={type}
                 type="button"
                 onClick={() => handleWordTypeChange(type)}
-                className={`flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${
+                className={`flex-1 md:flex-none px-4 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
                   selectedWordType === type
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
@@ -482,7 +488,7 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
                 key={lvl}
                 type="button"
                 onClick={() => handleLevelChange(lvl)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   selectedLevel === lvl
                     ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
@@ -498,7 +504,7 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
             <button
               type="button"
               onClick={() => setViewMode('focus')}
-              className={`p-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+              className={`p-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
                 viewMode === 'focus'
                   ? 'bg-slate-800 text-white font-medium'
                   : 'text-slate-400 hover:text-white'
@@ -511,7 +517,7 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
             <button
               type="button"
               onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-all ${
+              className={`p-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
                 viewMode === 'grid'
                   ? 'bg-slate-800 text-white font-medium'
                   : 'text-slate-400 hover:text-white'
@@ -542,7 +548,7 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-white cursor-pointer"
               >
                 Clear
               </button>
@@ -620,7 +626,7 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
               handleLevelChange('A1');
               handleWordTypeChange('verb');
             }}
-            className="mt-4 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold"
+            className="mt-4 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold cursor-pointer"
           >
             Reset Filters to A1 Verbs
           </button>
@@ -638,7 +644,7 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
               <button
                 type="button"
                 onClick={handleShuffle}
-                className="p-1.5 rounded-lg bg-slate-850 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors border border-slate-800"
+                className="p-1.5 rounded-lg bg-slate-850 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors border border-slate-800 cursor-pointer"
                 title="Shuffle deck"
               >
                 <Shuffle className="w-3.5 h-3.5" />
@@ -649,10 +655,10 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
               <button
                 type="button"
                 onClick={() => setIsCurrentCardFlipped((f) => !f)}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 font-medium transition-colors border border-indigo-500/30"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 font-medium transition-colors border border-indigo-500/30 cursor-pointer"
               >
                 <RotateCw className="w-3.5 h-3.5" />
-                Flip
+                <span>{isCurrentCardFlipped ? 'Flip Front' : 'Flip Back'}</span>
               </button>
             </div>
           </div>
@@ -708,7 +714,7 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
             <button
               type="button"
               onClick={handlePrev}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-800 font-medium text-sm transition-all hover:border-slate-700 shadow-md active:scale-95"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-800 font-medium text-sm transition-all hover:border-slate-700 shadow-md active:scale-95 cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
               Previous
@@ -727,7 +733,7 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
                     : (currentCard as AdjectiveWord).positive;
                 speakGerman(text);
               }}
-              className="p-3 rounded-full bg-slate-900 hover:bg-slate-800 text-indigo-400 hover:text-indigo-300 border border-slate-800 hover:border-indigo-500/40 transition-all shadow-md active:scale-95"
+              className="p-3 rounded-full bg-slate-900 hover:bg-slate-800 text-indigo-400 hover:text-indigo-300 border border-slate-800 hover:border-indigo-500/40 transition-all shadow-md active:scale-95 cursor-pointer"
               title="Pronounce word"
             >
               <Volume2 className="w-5 h-5" />
@@ -736,7 +742,7 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
             <button
               type="button"
               onClick={handleNext}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition-all shadow-lg shadow-indigo-600/25 active:scale-95"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition-all shadow-lg shadow-indigo-600/25 active:scale-95 cursor-pointer"
             >
               Next
               <ChevronRight className="w-4 h-4" />
@@ -761,19 +767,13 @@ export function DeckViewer({ initialWords }: DeckViewerProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredWords.map((word, idx) => {
+            {filteredWords.map((word) => {
               const isMastered = masteredIds.has(word.id);
               const isLearning = learningIds.has(word.id);
               const isFavorite = favoriteIds.has(word.id);
 
               return (
-                <div
-                  key={word.id}
-                  onClick={() => {
-                    setCurrentIndex(idx);
-                    saveProgress(selectedWordType, selectedLevel, idx);
-                  }}
-                >
+                <div key={word.id}>
                   {word.wordType === 'verb' && (
                     <VerbFlashcard
                       verb={word as VerbWord}

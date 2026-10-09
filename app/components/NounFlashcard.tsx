@@ -57,10 +57,9 @@ export function NounFlashcard({
 
   return (
     <div
-      className={`group relative w-full perspective-1200 cursor-pointer select-none ${
+      className={`group relative w-full perspective-1200 select-none ${
         size === 'large' ? 'h-[500px] max-w-xl mx-auto' : 'h-[420px]'
       }`}
-      onClick={handleFlip}
     >
       <div
         className={`relative w-full h-full duration-500 ease-out transform-style-3d transition-transform ${
@@ -68,7 +67,12 @@ export function NounFlashcard({
         }`}
       >
         {/* FRONT */}
-        <div className="absolute inset-0 w-full h-full backface-hidden rounded-3xl border border-slate-700/60 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 p-6 flex flex-col justify-between shadow-xl shadow-slate-950/60 hover:border-slate-500/80 transition-all">
+        <div
+          onClick={handleFlip}
+          className={`absolute inset-0 w-full h-full backface-hidden rounded-3xl border border-slate-700/60 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 p-6 flex flex-col justify-between shadow-xl shadow-slate-950/60 hover:border-slate-500/80 transition-all cursor-pointer ${
+            isFlipped ? 'pointer-events-none opacity-0 invisible' : 'pointer-events-auto opacity-100 visible'
+          }`}
+        >
           <div className="relative z-10 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
@@ -135,13 +139,17 @@ export function NounFlashcard({
         </div>
 
         {/* BACK */}
-        <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-3xl border border-sky-500/40 bg-gradient-to-br from-slate-900 via-slate-850 to-sky-950/40 p-6 flex flex-col justify-between shadow-2xl">
+        <div
+          className={`absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-3xl border border-sky-500/40 bg-gradient-to-br from-slate-900 via-slate-850 to-sky-950/40 p-6 flex flex-col justify-between shadow-2xl ${
+            isFlipped ? 'pointer-events-auto opacity-100 visible' : 'pointer-events-none opacity-0 invisible'
+          }`}
+        >
           <div className="flex items-start justify-between border-b border-slate-800/80 pb-3">
             <div>
               <span className="text-xl font-bold text-white">{noun.singular}</span>
               <p className="text-base font-medium text-emerald-400 mt-1">{noun.english}</p>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <button
                 type="button"
                 onClick={(e) => handleAudio(e, `${noun.singular}. ${noun.plural}`)}
@@ -155,9 +163,11 @@ export function NounFlashcard({
                   e.stopPropagation();
                   handleFlip();
                 }}
-                className="p-1.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30"
+                className="px-2 py-1.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-medium flex items-center gap-1"
+                title="Flip back to front"
               >
-                <RotateCw className="w-4 h-4" />
+                <RotateCw className="w-3.5 h-3.5" />
+                <span>Front</span>
               </button>
             </div>
           </div>
@@ -184,14 +194,14 @@ export function NounFlashcard({
                   e.stopPropagation();
                   onToggleLearning(noun.id);
                 }}
-                className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-medium border flex items-center justify-center gap-1.5 ${
+                className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all ${
                   isLearning && !isMastered
-                    ? 'bg-amber-500/25 text-amber-300 border-amber-500/50'
-                    : 'bg-slate-800 text-slate-300 border-slate-700'
+                    ? 'bg-amber-500/30 text-amber-200 border-amber-400 ring-1 ring-amber-400/50'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border-slate-700'
                 }`}
               >
                 <Clock className="w-3.5 h-3.5" />
-                Still Learning
+                {isLearning && !isMastered ? 'In Progress' : 'Still Learning'}
               </button>
             )}
             {onToggleMastered && (
@@ -201,14 +211,14 @@ export function NounFlashcard({
                   e.stopPropagation();
                   onToggleMastered(noun.id);
                 }}
-                className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-medium border flex items-center justify-center gap-1.5 ${
+                className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all ${
                   isMastered
-                    ? 'bg-emerald-500/25 text-emerald-300 border-emerald-500/50'
-                    : 'bg-slate-800 text-slate-300 border-slate-700'
+                    ? 'bg-emerald-500/30 text-emerald-200 border-emerald-400 ring-1 ring-emerald-400/50'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border-slate-700'
                 }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                Mastered
+                {isMastered ? 'Mastered' : 'Mark Mastered'}
               </button>
             )}
           </div>

@@ -7,9 +7,43 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-slate-950 text-slate-100 antialiased min-h-screen selection:bg-amber-500/30 selection:text-amber-200;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+/* 3D Flip Card Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.45);
 }
